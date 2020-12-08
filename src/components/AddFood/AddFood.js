@@ -1,6 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, TextInput, TouchableOpacity, Text, FlatList} from 'react-native';
-import {Foods} from '../../containers/Home/constants';
+import {getData} from '../../utils';
+import {keys} from '../../constants';
+import useFoods from '../hooks/useFoods/useFoods';
+//import {Foods} from '../../containers/Home/constants';
 
 const FoodItem = ({item, addFood}) => {
   const [food, setFood] = useState(item);
@@ -39,7 +42,7 @@ const FoodItem = ({item, addFood}) => {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          borderColor: 'blue',
+          borderColor: 'black',
           borderWidth: 1,
         }}>
         <Text>-</Text>
@@ -49,7 +52,7 @@ const FoodItem = ({item, addFood}) => {
           flex: 2,
           justifyContent: 'center',
           alignItems: 'center',
-          borderColor: 'blue',
+          borderColor: 'black',
           borderWidth: 1,
         }}>
         <TouchableOpacity
@@ -64,7 +67,13 @@ const FoodItem = ({item, addFood}) => {
           }}>
           <Text>{item.name}</Text>
         </TouchableOpacity>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'flex-start',
+          }}>
           <TextInput
             onChangeText={(e) =>
               setFood({
@@ -81,7 +90,7 @@ const FoodItem = ({item, addFood}) => {
             keyboardType="numeric"
             placeholder="trazi"
             value={food.quantity.toString()}
-            style={{width: 50, textAlign: 'center'}}
+            style={{textAlign: 'center'}}
             selectTextOnFocus
           />
           <Text>g</Text>
@@ -93,7 +102,7 @@ const FoodItem = ({item, addFood}) => {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          borderColor: 'blue',
+          borderColor: 'black',
           borderWidth: 1,
         }}>
         <Text>+</Text>
@@ -103,10 +112,17 @@ const FoodItem = ({item, addFood}) => {
 };
 
 const AddFood = ({setModalVisible, addFood}) => {
-  const [foodList, setFoodList] = useState(Foods);
+  const [foods] = useFoods();
+  console.log('AddFood -> foods', foods);
+  useEffect(() => {
+    setFoodList(foods);
+  }, [foods]);
+
+  const [foodList, setFoodList] = useState(foods);
+
   const searchFood = (e) => {
-    const searchResults = Foods.filter((food) => {
-      return food.name.includes(e);
+    const searchResults = foods.filter((food) => {
+      return food.name.toLowerCase().includes(e.toLowerCase());
     });
     setFoodList(searchResults);
   };
@@ -114,20 +130,21 @@ const AddFood = ({setModalVisible, addFood}) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: 'green',
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
       }}>
       <TextInput
         onChangeText={searchFood}
-        placeholder="trazi"
+        placeholder="Trazi hranu"
         style={{
           borderWidth: 1,
-          borderColor: 'brown',
+          borderColor: 'black',
           width: '100%',
           height: 40,
           marginTop: 40,
+          textAlign: 'center',
         }}
       />
 
@@ -138,11 +155,11 @@ const AddFood = ({setModalVisible, addFood}) => {
         keyExtractor={(item) => item.name}
       />
       <TouchableOpacity
-        style={{backgroundColor: 'red', padding: 10}}
+        style={{backgroundColor: 'black', padding: 10}}
         onPress={() => {
           setModalVisible(false);
         }}>
-        <Text>Zatvori</Text>
+        <Text style={{color: 'white'}}>Zatvori</Text>
       </TouchableOpacity>
     </View>
   );

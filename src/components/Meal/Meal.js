@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { SettingsContext } from '../../App';
 
-const Meal = ({meal: {foods}, meal, openModal, index}) => {
+const Meal = ({ meal: { foods }, meal, openModal, index, deleteMeal }) => {
   let nutrients = {
     totalCarbs: 0,
     totalProteins: 0,
@@ -134,7 +136,7 @@ const Meal = ({meal: {foods}, meal, openModal, index}) => {
             flex: 1,
             textAlign: 'center',
           }}>
-          CAL
+          Kal
         </Text>
         <Text
           style={{
@@ -223,30 +225,48 @@ const Meal = ({meal: {foods}, meal, openModal, index}) => {
       </View>
     );
   };
+  const { settingsInformation } = useContext(SettingsContext);
+  console.log('Meal -> settingsInformation', settingsInformation);
 
-  const unitsOfInsulin = nutrients.totalCarbs / 7.5;
+  const unitsOfInsulin =
+    nutrients.totalCarbs / settingsInformation.carbsCoveragePerInsulinUnit;
   return (
-    <View style={{backgroundColor: 'gray', marginVertical: 10}}>
-      <Text style={{alignSelf: 'center'}}>{meal.name}</Text>
-      {renderTable()}
-      <Text
+    <View style={{ backgroundColor: 'white', marginVertical: 10 }}>
+      <View
         style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginVertical: 10,
-        }}>{`Jedinica insulina za obrok: ${unitsOfInsulin}`}</Text>
+        }}>
+        <Text style={{ alignSelf: 'center' }}>{meal.name}</Text>
+        <TouchableOpacity onPress={() => deleteMeal(index)}>
+          <Text>Obrisi</Text>
+        </TouchableOpacity>
+      </View>
+
+      {renderTable()}
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text
+          style={{
+            marginVertical: 10,
+          }}>
+          Jedinica insulina za obrok:
+        </Text>
+        <Text style={{ fontWeight: 'bold' }}> {unitsOfInsulin.toFixed(2)}</Text>
+      </View>
+
       <View
         style={{
           flexDirection: 'row',
           width: '100%',
           justifyContent: 'space-around',
         }}>
-        <TouchableOpacity onPress={() => openModal(index)}>
-          <Text>+ hrana</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>+ obrok</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>+ rucno</Text>
+        <TouchableOpacity
+          style={{
+            marginBottom: 10,
+          }}
+          onPress={() => openModal(index)}>
+          <Text>+ Dodaj hranu</Text>
         </TouchableOpacity>
       </View>
     </View>
